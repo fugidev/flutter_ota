@@ -49,11 +49,12 @@ dev_dependencies:
   fluttertoast: ^8.2.2
   bluetooth_enable_fork: ^0.1.6
   device_info_plus: ^9.0.0
-  permission_handler: ^10.2.0
+  permission_handler: ^11.3.1
   path_provider: ^2.0.15
-  file_picker: ^5.3.3
+  file_picker: ^8.0.0+1
   http: ^1.2.0
-  flutter_ota: ^0.1.11
+  flutter_ota:
+    path: ..
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
