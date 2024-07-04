@@ -57,13 +57,13 @@ Esp32OtaPackage otaPackage = Esp32OtaPackage(notifyCharacteristic, dataCharacter
       By checking the updateType parameter, you can adapt your OTA update logic to the specific requirements of the firmware implementation. This ensures compatibility and seamless OTA updates for different types of ESP32 firmware.
 
 * `firmwareType`:
-    * 1: For binary firmware files stored in your Flutter project assets.
-    * 2: To select a binary firmware file from the device storage.
-    * 3: For downloading firmware from a URL.
+    * `FirmwareType.assets`: For binary firmware files stored in your Flutter project assets.
+    * `FirmwareType.filepicker`: To select a binary firmware file from the device storage.
+    * `FirmwareType.url`: For downloading firmware from a URL.
 
-5. (Optional) Provide the path to the binary firmware file (`binFilePath`) if `firmwareType` is set to 1.
+5. (Optional) Provide the path to the binary firmware file (`binFilePath`) if `firmwareType` is set to `FirmwareType.assets`.
 
-6. (Optional) Provide the URL of the firmware file if `firmwareType` is set to 3.
+6. (Optional) Provide the URL of the firmware file if `firmwareType` is set to `FirmwareType.url`.
 
 7. Call the `updateFirmware` method of the `otaPackage` instance:
 
