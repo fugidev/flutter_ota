@@ -19,7 +19,7 @@ abstract class OtaPackage {
   /// [url]: The URL to fetch firmware from (optional).
   Future<void> updateFirmware(
       BluetoothDevice device,
-      int updateType,
+      UpdateType updateType,
       int firmwareType,
       {String? binFilePath,
       String? url});
@@ -29,6 +29,11 @@ abstract class OtaPackage {
 
   /// Stream to provide progress percentage
   Stream<int> get percentageStream;
+}
+
+enum UpdateType {
+  espidf,
+  arduino,
 }
 
 /// A class responsible for handling BLE repository operations.
@@ -311,11 +316,11 @@ class Esp32OtaPackage implements OtaPackage {
   @override
   Future<void> updateFirmware(
       BluetoothDevice device,
-      int updateType,
+      UpdateType updateType,
       int firmwareType,
       {String? binFilePath,
       String? url}) async {
-    if (updateType == 1) {
+    if (updateType == UpdateType.espidf) {
       final bleRepo = BleRepository();
 
       /// Get MTU size from the device
@@ -384,7 +389,7 @@ class Esp32OtaPackage implements OtaPackage {
         print('OTA update failed');
         firmwareUpdate = false; // Firmware update failed
       }
-    } else if (updateType == 2) {
+    } else if (updateType == UpdateType.arduino) {
 
       final bleRepo = BleRepository();
 

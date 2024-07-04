@@ -188,7 +188,7 @@ class _NewOTAUpdatePageState extends State<NewOTAUpdatePage> {
                           // Perform the OTA update with the picked binfile
                           await esp32otaPackage.updateFirmware(
                             device,
-                            1, //Update Type
+                            UpdateType.espidf,
                             1,
                             binFilePath: "assets/helllo.ino.bin",
                           );

@@ -49,12 +49,13 @@ Esp32OtaPackage otaPackage = Esp32OtaPackage(notifyCharacteristic, dataCharacter
 4. Choose the firmware update type (`updateType`) and firmware type (`firmwareType`):
 
 * `updateType`:
-    * Update Type 1: ESP-IDF/Espressif Firmware Update
-      If updateType is set to 1, it indicates that the firmware update follows the ESP-IDF/Espressif framework. In this case, you'll typically perform OTA updates using binary files and utilize the NimBLE Bluetooth stack.
+    * `UpdateType.espidf`: ESP-IDF/Espressif Firmware Update
+      This indicates that the firmware update follows the ESP-IDF/Espressif framework. In this case, you'll typically perform OTA updates using binary files and utilize the NimBLE Bluetooth stack.
 
-    * Update Type 2: Arduino IDE-Based Firmware Update
-      If updateType is set to 2, it suggests that the firmware update is based on the Arduino framework for ESP32. This could involve custom OTA update logic implemented on the ESP32 side, possibly using specific GATT services and characteristics for communication.
+    * `UpdateType.arduino`: Arduino IDE-Based Firmware Update
+      This suggests that the firmware update is based on the Arduino framework for ESP32. This could involve custom OTA update logic implemented on the ESP32 side, possibly using specific GATT services and characteristics for communication.
       By checking the updateType parameter, you can adapt your OTA update logic to the specific requirements of the firmware implementation. This ensures compatibility and seamless OTA updates for different types of ESP32 firmware.
+
 * `firmwareType`:
     * 1: For binary firmware files stored in your Flutter project assets.
     * 2: To select a binary firmware file from the device storage.
