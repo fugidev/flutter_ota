@@ -61,19 +61,16 @@ Esp32OtaPackage otaPackage = Esp32OtaPackage(notifyCharacteristic, dataCharacter
     * `FirmwareType.filepicker`: To select a binary firmware file from the device storage.
     * `FirmwareType.url`: For downloading firmware from a URL.
 
-5. (Optional) Provide the path to the binary firmware file (`binFilePath`) if `firmwareType` is set to `FirmwareType.assets`.
+5. (Optional) `uri`: Provide the path to the binary firmware file if `firmwareType` is set to `FirmwareType.assets` OR provide the URL of the firmware file if `firmwareType` is set to `FirmwareType.url`.
 
-6. (Optional) Provide the URL of the firmware file if `firmwareType` is set to `FirmwareType.url`.
-
-7. Call the `updateFirmware` method of the `otaPackage` instance:
+6. Call the `updateFirmware` method of the `otaPackage` instance:
 
 ```dart
 await otaPackage.updateFirmware(
   device,
   updateType,
   firmwareType,
-  binFilePath: binFilePath,
-  url: url,
+  uri: uri,
 );
 ```
 

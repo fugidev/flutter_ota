@@ -190,7 +190,7 @@ class _NewOTAUpdatePageState extends State<NewOTAUpdatePage> {
                             device,
                             UpdateType.espidf,
                             FirmwareType.assets,
-                            binFilePath: "assets/helllo.ino.bin",
+                            uri: "assets/helllo.ino.bin",
                           );
 
                           // Initialize BleUartController before sending a command
