@@ -64,7 +64,6 @@ class BleRepository {
 /// Implementation of OTA package for ESP32
 class Esp32OtaPackage implements OtaPackage {
   /// Properties
-  int mtu = 400; // Maximum Transmission Unit size
   int part = 16000; // Part size for firmware update
   final BluetoothCharacteristic
       notifyCharacteristic; // Characteristic for notifications
@@ -109,8 +108,8 @@ class Esp32OtaPackage implements OtaPackage {
 
   /// Get firmware chunks from file picker
   Future<List<Uint8List>> _getFirmwareFromPicker(int mtuSize) async {
-    print("Mtu size in fie picker is $mtuSize");
-
+    print("Mtu size in file picker is $mtuSize");
+    
     final result = await FilePicker.platform.pickFiles(
       type: FileType.any,
       //allowedExtensions: ['bin'],
@@ -236,26 +235,26 @@ class Esp32OtaPackage implements OtaPackage {
   }
 
   /// sendPart function which is used to send parts to the esp32
-  Future<void> sendPart(int position, Uint8List data) async {
+  Future<void> sendPart(int position, Uint8List data, int mtuSize) async {
     final bleRepo = BleRepository();
     int start = (position * part);
     int end = (position + 1) * part;
     if (data.length < end) {
       end = data.length;
     }
-    int parts = (end - start) ~/ mtu;
+    int parts = (end - start) ~/ mtuSize;
     print("Parts are $parts");
     for (int i = 0; i < parts; i++) {
       print(
           "created $i parts"); //<------------------------------ Print to debug
-      Uint8List toSend = Uint8List(mtu + 2);
+      Uint8List toSend = Uint8List(mtuSize + 2);
       toSend[0] = 0XFB;
       toSend[1] = i;
       int variable = 2;
-      for (int y = 0; y < mtu; y++) {
+      for (int y = 0; y < mtuSize; y++) {
         /// toSend.append(data[(position * PART) + (MTU * i) + y])
 
-        int x = data[(position * part) + (mtu * i) + y];
+        int x = data[(position * part) + (mtuSize * i) + y];
         Uint8List list2 = Uint8List.fromList([x]);
 
         /// Copy the contents of list1 into the beginning of combinedList
@@ -269,15 +268,15 @@ class Esp32OtaPackage implements OtaPackage {
       await bleRepo.writeDataCharacteristic(writeCharacteristic, toSend);
       //print("--- send data at this line in code ---");  //<------------------------------ Print to debug
     }
-    if ((end - start) % mtu != 0) {
+    if ((end - start) % mtuSize != 0) {
       print("in other if");
-      int rem = (end - start) % mtu;
+      int rem = (end - start) % mtuSize;
       Uint8List toSend = Uint8List(rem + 2);
       toSend[0] = 0XFB;
       toSend[1] = parts;
       int variable = 2;
       for (int y = 0; y < rem; y++) {
-        int x = data[(position * part) + (mtu * parts) + y];
+        int x = data[(position * part) + (mtuSize * parts) + y];
         Uint8List list2 = Uint8List.fromList([x]);
 
         /// Copy the contents of list1 into the beginning of combinedList
@@ -303,7 +302,7 @@ class Esp32OtaPackage implements OtaPackage {
     print("---- send update on this line of code --- $update");
   }
 
-  /// sendPArt function ends here
+  /// sendPart function ends here
 
   @override
   Future<void> updateFirmware(
@@ -315,12 +314,12 @@ class Esp32OtaPackage implements OtaPackage {
     if (firmwareType != FirmwareType.filepicker && (uri == null || uri.isEmpty)) {
       throw 'uri is required for the specified firmware type.';
     }
+    
+    // Get MTU size from the device
+    int mtuSize = await device.mtu.first;
 
     if (updateType == UpdateType.espidf) {
       final bleRepo = BleRepository();
-
-      /// Get MTU size from the device
-      int mtuSize = 200;
 
       print("MTU size of current device $mtuSize");
 
@@ -390,9 +389,6 @@ class Esp32OtaPackage implements OtaPackage {
 
       final bleRepo = BleRepository();
 
-      /// Get MTU size from the device
-      int mtuSize = await device.mtu.first;
-
       print("MTU size of current device $mtuSize");
 
       /// Prepare a byte list to write MTU size to controlCharacteristic
@@ -447,7 +443,7 @@ class Esp32OtaPackage implements OtaPackage {
 
           /// Used getUint16 for a 2-byte integer
           print("--------- nxt -------- $nxt");
-          sendPart(nxt, binFile!);
+          sendPart(nxt, binFile!, mtuSize);
         }
         if (value[0] == 0x0F) {
           print("OTA Update complete");
@@ -480,14 +476,14 @@ class Esp32OtaPackage implements OtaPackage {
       otaInfo[0] = 0xFF;
       otaInfo[1] = (fileParts ~/ 256);
       otaInfo[2] = (fileParts % 256);
-      otaInfo[3] = (mtu ~/ 256);
-      otaInfo[4] = (mtu % 256);
+      otaInfo[3] = (mtuSize ~/ 256);
+      otaInfo[4] = (mtuSize % 256);
       print("this is otaInfo : $otaInfo"); // this is where it is sent to esp32
       await bleRepo.writeDataCharacteristic(writeCharacteristic, otaInfo);
 
       ///5. Divide bin file into parts
       int packageNumber = 0;
-      sendPart(0, binFile);
+      sendPart(0, binFile, mtuSize);
       double progress = (packageNumber / fileParts) * 100;
       int roundedProgress = progress.round(); // Rounded off progress value
       print('Writing part number $packageNumber of $fileParts to ESP32');
