@@ -186,25 +186,12 @@ class _NewOTAUpdatePageState extends State<NewOTAUpdatePage> {
                           );
 
                           // Perform the OTA update with the picked binfile
-                          await esp32otaPackage!.updateFirmware(
+                          await esp32otaPackage.updateFirmware(
                             device,
-                            1, //Update Type
-                            1,
-                            service,
-                            notifyUuid,
-                            writeUuid,
-                            binFilePath: "assets/helllo.ino.bin",
+                            UpdateType.espidf,
+                            FirmwareType.assets,
+                            uri: "assets/helllo.ino.bin",
                           );
-                          /*if (binfile != null) {
-                              await esp32otaPackage.updateFirmware(
-                                device,
-                                1,
-                                service,
-                                dataUuid,
-                                controlUuid,
-                                binFilePath: "assets/helllo.ino.bin",
-                              );
-                            }*/
 
                           // Initialize BleUartController before sending a command
                           // bleUartController.init();
